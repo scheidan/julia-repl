@@ -281,6 +281,11 @@ When PASTE-P, “bracketed paste” mode will be used. When RET-P, terminate wit
   (cl-defstruct julia-repl--buffer-ghostel
     "Terminal backend using ‘ghostel’, which needs to be installed and loaded.")
 
+  (defun julia-repl--ghostel-scroll-to-bottom ()
+    "Scroll visible windows displaying the current ghostel buffer to the bottom."
+    (dolist (window (get-buffer-window-list (current-buffer) nil t))
+      (ghostel--anchor-window window)))
+
   (cl-defmethod julia-repl--locate-live-buffer ((_terminal-backend julia-repl--buffer-ghostel)
 						name)
     (if-let ((inferior-buffer (get-buffer (julia-repl--add-earmuffs name))))
@@ -306,6 +311,7 @@ When PASTE-P, “bracketed paste” mode will be used. When RET-P, terminate wit
   (cl-defmethod julia-repl--send-to-backend ((_terminal-backend julia-repl--buffer-ghostel)
 					     buffer string paste-p ret-p)
     (with-current-buffer buffer
+      (julia-repl--ghostel-scroll-to-bottom)
       (if paste-p
 	  (ghostel-paste-string string)
         (ghostel-send-string string))
