@@ -275,7 +275,6 @@ When PASTE-P, “bracketed paste” mode will be used. When RET-P, terminate wit
 
   ;; this variables are defined by ghostel.el and are only locally changed.
   (defvar ghostel--process)
-  (defvar ghostel-use-native-pty)
   (defvar ghostel-buffer-name-function)
 
   (cl-defstruct julia-repl--buffer-ghostel
@@ -298,8 +297,7 @@ When PASTE-P, “bracketed paste” mode will be used. When RET-P, terminate wit
 					 name executable-path switches)
     (let ((inferior-buffer (get-buffer-create (julia-repl--add-earmuffs name))))
       (with-current-buffer inferior-buffer
-	(let ((ghostel-use-native-pty nil)	  ; use Emacs process machinery
-	      (ghostel-buffer-name-function nil)) ; avoid ghostel's renaming
+	(let ((ghostel-buffer-name-function nil)) ; avoid ghostel's renaming
 	  (ghostel-exec inferior-buffer executable-path switches))
 	(setq-local ghostel-buffer-name-function nil)
 	(mapc (lambda (k)
